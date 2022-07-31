@@ -30,11 +30,12 @@ try
 
     IMessageBrokerClient messageBrokerClient = messageBrokerConfiguration.Name switch
     {
-        MessageBrokerEnum.NotConfigured => new NotConfiguredClient(loggerFactory
-            .CreateLogger<NotConfiguredClient>()),
-        MessageBrokerEnum.AzureServiceBus => new AzureServiceBusClient(loggerFactory
-            .CreateLogger<AzureServiceBusClient>()),
-        MessageBrokerEnum.RabbitMq => new RabbitMqClient(loggerFactory.CreateLogger<RabbitMqClient>()),
+        MessageBrokerEnum.NotConfigured => new NotConfiguredClient(
+            loggerFactory.CreateLogger<NotConfiguredClient>()),
+        MessageBrokerEnum.AzureServiceBus => new AzureServiceBusClient(
+            loggerFactory.CreateLogger<AzureServiceBusClient>()),
+        MessageBrokerEnum.RabbitMq => new RabbitMqClient(
+            loggerFactory.CreateLogger<RabbitMqClient>()),
         _ => new NotConfiguredClient(loggerFactory.CreateLogger<NotConfiguredClient>())
     };
 
