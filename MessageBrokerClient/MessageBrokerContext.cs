@@ -11,7 +11,7 @@ public class MessageBrokerContext : IMessageBrokerContext
 
     public IMessageBrokerClient MessageBrokerClient { get; private set; }
 
-    public async Task SetStrategyAsync(IMessageBrokerClient messageBrokerClient)
+    public async Task SetMessageBrokerClientAsync(IMessageBrokerClient messageBrokerClient)
     {
         MessageBrokerClient = messageBrokerClient;
         await Task.CompletedTask;

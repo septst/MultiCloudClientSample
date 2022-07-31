@@ -19,14 +19,15 @@ var logger = app.Logger;
 try
 {
     var messageBrokerContextService = app.Services.GetRequiredService<IMessageBrokerContext>();
-    var messageBrokerConfiguration = builder.Configuration
-        .GetSection("MessageBroker")
-        .Get<MessageBrokerConfiguration>();
 
     using var loggerFactory = LoggerFactory.Create(
         loggingBuilder => loggingBuilder
             .SetMinimumLevel(LogLevel.Information)
             .AddJsonConsole());
+    
+    var messageBrokerConfiguration = builder.Configuration
+        .GetSection("MessageBroker")
+        .Get<MessageBrokerConfiguration>();
 
     IMessageBrokerClient messageBrokerClient = messageBrokerConfiguration.Name switch
     {
@@ -39,7 +40,7 @@ try
         _ => new NotConfiguredClient(loggerFactory.CreateLogger<NotConfiguredClient>())
     };
 
-    await messageBrokerContextService.SetStrategyAsync(messageBrokerClient);
+    await messageBrokerContextService.SetMessageBrokerClientAsync(messageBrokerClient);
     await messageBrokerContextService.SendMessageAsync("Hello World!");
 
     await app.RunAsync();

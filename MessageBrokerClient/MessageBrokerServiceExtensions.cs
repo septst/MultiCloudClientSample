@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MessageBrokerBase;
@@ -8,5 +9,6 @@ public class MessageBrokerServiceExtensions
         IServiceCollection services,
         MessageBrokerEnum messageBroker)
     {
+        throw new NotImplementedException();
     }
 }

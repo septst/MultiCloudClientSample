@@ -6,6 +6,6 @@ public interface IMessageBrokerContext
 {
     IMessageBrokerClient MessageBrokerClient { get; }
 
-    Task SetStrategyAsync(IMessageBrokerClient messageBrokerClient);
+    Task SetMessageBrokerClientAsync(IMessageBrokerClient messageBrokerClient);
     Task SendMessageAsync(string message);
 }
