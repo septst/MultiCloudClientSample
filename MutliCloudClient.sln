@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiCloudClientConsole", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBrokerClient", "MessageBrokerClient\MessageBrokerClient.csproj", "{32F8921C-8058-4562-A4F1-7C57DE8D22E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBrokerClient.Tests", "MessageBrokerClient.Tests\MessageBrokerClient.Tests.csproj", "{F1BC8077-9941-4864-89D5-21B500A323B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,10 @@ Global
 		{32F8921C-8058-4562-A4F1-7C57DE8D22E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32F8921C-8058-4562-A4F1-7C57DE8D22E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32F8921C-8058-4562-A4F1-7C57DE8D22E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1BC8077-9941-4864-89D5-21B500A323B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1BC8077-9941-4864-89D5-21B500A323B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1BC8077-9941-4864-89D5-21B500A323B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1BC8077-9941-4864-89D5-21B500A323B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
