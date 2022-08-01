@@ -4,43 +4,44 @@ using MessageBrokerBase.Clients;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.json");
-builder.Logging.AddJsonConsole();
+var startupLogger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
 
 builder.Services.AddSingleton<IMessageBrokerContext, MessageBrokerContext>();
-builder.Services.AddSingleton<IMessageBrokerClient, NotConfiguredClient>();
+
+builder.Services.AddSingleton(
+    _ =>
+        builder.Configuration
+            .GetSection(MessageBrokerConfiguration.Position)
+            .Get<MessageBrokerConfiguration>()
+);
+
+builder.Services.AddSingleton(
+    serviceProvider =>
+    {
+        MessageBrokerConfiguration config = serviceProvider.GetRequiredService<MessageBrokerConfiguration>();
+        IMessageBrokerClient client = config.Name switch
+        {
+            MessageBrokerEnum.NotConfigured => ActivatorUtilities.CreateInstance<NotConfiguredClient>(serviceProvider),
+            MessageBrokerEnum.AzureServiceBus => ActivatorUtilities.CreateInstance<AzureServiceBusClient>(
+                serviceProvider),
+            MessageBrokerEnum.RabbitMq => ActivatorUtilities.CreateInstance<RabbitMqClient>(serviceProvider),
+            _ => ActivatorUtilities.CreateInstance<NotConfiguredClient>(serviceProvider)
+        };
+        return client;
+    });
 
 var app = builder.Build();
-var logger = app.Logger;
 
+var messageBrokerContextService =
+    app.Services.GetRequiredService<IMessageBrokerContext>();
 try
 {
-    var messageBrokerContextService = app.Services.GetRequiredService<IMessageBrokerContext>();
-
-    using var loggerFactory = LoggerFactory.Create(
-        loggingBuilder => loggingBuilder
-            .SetMinimumLevel(LogLevel.Information)
-            .AddJsonConsole());
-    
-    var messageBrokerConfiguration = builder.Configuration
-        .GetSection("MessageBroker")
-        .Get<MessageBrokerConfiguration>();
-
-    IMessageBrokerClient messageBrokerClient = messageBrokerConfiguration.Name switch
-    {
-        MessageBrokerEnum.NotConfigured => new NotConfiguredClient(
-            loggerFactory.CreateLogger<NotConfiguredClient>()),
-        MessageBrokerEnum.AzureServiceBus => new AzureServiceBusClient(
-            loggerFactory.CreateLogger<AzureServiceBusClient>()),
-        MessageBrokerEnum.RabbitMq => new RabbitMqClient(
-            loggerFactory.CreateLogger<RabbitMqClient>()),
-        _ => new NotConfiguredClient(loggerFactory.CreateLogger<NotConfiguredClient>())
-    };
-
-    await messageBrokerContextService.SetMessageBrokerClientAsync(messageBrokerClient);
     await messageBrokerContextService.SendMessageAsync("Hello World!");
 
     await app.RunAsync();
@@ -49,5 +50,5 @@ try
 }
 catch (Exception exception)
 {
-    logger.LogError(exception, "Error occured during startup");
+    startupLogger.Fatal(exception, "Error occurred during startup");
 }
