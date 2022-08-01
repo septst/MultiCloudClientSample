@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace MessageBrokerBase;
+namespace MessageBrokerClient;
 
 public interface IMessageBrokerContext
 {

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace MessageBrokerBase.Clients;
+namespace MessageBrokerClient.Clients;
 
 public class NotConfiguredClient : IMessageBrokerClient
 {

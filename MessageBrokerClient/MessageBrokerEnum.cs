@@ -1,4 +1,4 @@
-namespace MessageBrokerBase;
+namespace MessageBrokerClient;
 
 public enum MessageBrokerEnum
 {
