@@ -1,7 +1,7 @@
 using MessageBrokerClient.Clients;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace MessageBrokerClient;
 
@@ -12,18 +12,20 @@ public static class MessageBrokerServiceExtensions
     {
         builder.Services.AddSingleton<IMessageBrokerContext, MessageBrokerContext>();
 
-        builder.Services.AddSingleton(
-            _ =>
-                builder.Configuration
-                    .GetSection(MessageBrokerConfiguration.Position)
-                    .Get<MessageBrokerConfiguration>()
-        );
+        var messageBrokerOptions = builder.Configuration
+            .GetSection(MessageBrokerOptions.Position);
+
+        builder.Services
+            .AddOptions<MessageBrokerOptions>()
+            .Bind(messageBrokerOptions)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         builder.Services.AddSingleton(
             serviceProvider =>
             {
-                var config = serviceProvider.GetRequiredService<MessageBrokerConfiguration>();
-                IMessageBrokerClient client = config.Name switch
+                var configOptions = serviceProvider.GetRequiredService<IOptions<MessageBrokerOptions>>().Value;
+                IMessageBrokerClient client = configOptions.Name switch
                 {
                     MessageBrokerEnum.NotConfigured => ActivatorUtilities.CreateInstance<NotConfiguredClient>(
                         serviceProvider),

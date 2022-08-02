@@ -4,6 +4,7 @@ using MessageBrokerClient.Clients;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace MessageBrokerClient.Tests;
@@ -22,19 +23,23 @@ public class MessageBrokerServiceExtensionsTests
         };
         var builder = WebApplication.CreateBuilder();
         builder.Configuration.AddInMemoryCollection(configDictionary);
-        
+
         // Act
         builder.AddMessageBrokerClient();
         var app = builder.Build();
         var messageBrokerContextService =
             app.Services.GetRequiredService<IMessageBrokerContext>();
-        
+        var messageBrokerOptions = app.Services
+            .GetRequiredService<IOptions<MessageBrokerOptions>>().Value;
+
         // Assert
+        messageBrokerOptions.Name.Should().Be(MessageBrokerEnum.RabbitMq);
+        messageBrokerOptions.ConnectionString.Should().Be("dummy-connection");
         messageBrokerContextService.Should().BeOfType<MessageBrokerContext>();
         messageBrokerContextService.MessageBrokerClient
             .Should().BeOfType<RabbitMqClient>();
     }
-    
+
     [Fact]
     public void RegistersDependenciesCorrectly_WithoutNotConfiguredClient()
     {
@@ -47,14 +52,18 @@ public class MessageBrokerServiceExtensionsTests
         };
         var builder = WebApplication.CreateBuilder();
         builder.Configuration.AddInMemoryCollection(configDictionary);
-        
+
         // Act
         builder.AddMessageBrokerClient();
         var app = builder.Build();
         var messageBrokerContextService =
             app.Services.GetRequiredService<IMessageBrokerContext>();
-        
+        var messageBrokerOptions = app.Services
+            .GetRequiredService<IOptions<MessageBrokerOptions>>().Value;
+
         // Assert
+        messageBrokerOptions.Name.Should().Be(MessageBrokerEnum.NotConfigured);
+        messageBrokerOptions.ConnectionString.Should().Be("dummy-connection");
         messageBrokerContextService.Should().BeOfType<MessageBrokerContext>();
         messageBrokerContextService.MessageBrokerClient
             .Should().BeOfType<NotConfiguredClient>();
