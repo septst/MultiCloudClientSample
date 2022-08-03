@@ -26,7 +26,7 @@ public class MessageBrokerServiceExtensionsTests
 
         // Act
         builder.AddMessageBrokerClient();
-        var app = builder.Build();
+        using var app = builder.Build();
         var messageBrokerContextService =
             app.Services.GetRequiredService<IMessageBrokerContext>();
         var messageBrokerOptions = app.Services
@@ -55,7 +55,7 @@ public class MessageBrokerServiceExtensionsTests
 
         // Act
         builder.AddMessageBrokerClient();
-        var app = builder.Build();
+        using var app = builder.Build();
         var messageBrokerContextService =
             app.Services.GetRequiredService<IMessageBrokerContext>();
         var messageBrokerOptions = app.Services
